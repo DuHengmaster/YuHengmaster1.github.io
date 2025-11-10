@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>咸鱼的青春物语 - Galgame双主线加长版</title>
+  <!-- 引入Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 自定义配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8B5CF6', // 主色调：紫色（浪漫感）
+            secondary: '#EC4899', // 辅助色：粉色（恋爱感）
+            neutral: '#1F2937', // 中性色：深灰
+            light: '#F9FAFB', // 浅色
+          },
+          fontFamily: {
+            sans: ['Noto Sans SC', 'sans-serif'],
+            serif: ['Noto Serif SC', 'serif'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.8s ease-in-out',
+            'slide-up': 'slideUp 0.6s ease-out',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(30px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            }
+          }
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+   @layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .backdrop-blur {
+    backdrop-filter: blur(8px);
+  }
+  .character-shadow {
+    filter: drop-shadow(0 10px 8px rgba(0,0,0,0.4));
+  }
+  .dialog-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 1rem;
+    /* 动漫风格边框 - 增加彩色描边 */
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #8B5CF6, 0 10px 30px rgba(0,0,0,0.2);
+  }
+  
+  /* 扩大的动漫风格选项框 */
+  .choice-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid #fff;
+    background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(245,245,245,0.85));
+    color: #1F2937;
+    text-align: left;
+    padding: 1.2rem 2rem; /* 扩大选项框尺寸 */
+    margin: 0.5rem 0;
+    border-radius: 0.75rem;
+    /* 动漫风格阴影与描边 */
+    box-shadow: 0 4px 0 #6D46C1, 
+                0 0 0 1px rgba(139, 92, 246, 0.5),
+                0 5px 15px rgba(0,0,0,0.1);
+    font-size: 1.1rem; /* 增大文字 */
+  }
+  
+  /* 左侧动漫风格箭头 */
+  .choice-btn::before {
+    content: "◆";
+    position: absolute;
+    left: 1rem;
+    opacity: 0;
+    transition: all 0.2s ease;
+    transform: translateX(-10px);
+    color: #EC4899; /* 动漫常用粉色箭头 */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  
+  .choice-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 0 #6D46C1,
+                0 0 0 1px rgba(139, 92, 246, 0.7),
+                0 10px 20px rgba(139, 92, 246, 0.3);
+    background: linear-gradient(145deg, #fff, #f0f0f0);
+  }
+  
+  .choice-btn:hover::before {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  /* 区分不同选项的动漫风格配色 */
+  .choice-btn.primary-choice {
+    border-color: #8B5CF6;
+    background: linear-gradient(145deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+  }
+  
+  .choice-btn.secondary-choice {
+    border-color: #EC4899;
+    background: linear-gradient(145deg, rgba(236, 72, 153, 0.1), rgba(236, 72, 153, 0.05));
+  }
+  
+  .scene-container {
+    background-size: cover;
+    background-position: center;
+    transition: background-image 1s ease-in-out;
+  }
+}
+  </style>
+</head>
+
+<body class="bg-neutral min-h-screen font-sans text-neutral overflow-hidden">
+  <!-- 游戏主容器 -->
+  <div id="game-container" class="relative w-full h-screen flex flex-col">
+    <!-- 场景背景 -->
+    <div id="scene" class="scene-container absolute inset-0 z-0" style="background-image: url('./photo/school.jpeg')">
+      <!-- 角色立绘 -->
+      <div class="absolute bottom-0 left-10 h-[70vh] z-10 animate-fade-in">
+        <img id="male-character" src="photo/cxk.jpg" alt="李咸鱼" class="h-full object-contain character-shadow opacity-0 transition-opacity 1s ease-in-out">
+      </div>
+      <div class="absolute bottom-0 right-10 h-[70vh] z-10 animate-fade-in">
+        <img id="female-character" src="photo/wcy.jpg" alt="王晁洋" class="h-full object-contain character-shadow opacity-0 transition-opacity 1s ease-in-out">
+      </div>
+    </div>
+
+    <!-- 对话区域 -->
+    <div class="relative z-20 mt-auto mb-8 px-4 md:px-8">
+      <div class="max-w-4xl mx-auto dialog-box p-6 shadow-2xl animate-slide-up">
+        <!-- 角色头像+名字 -->
+        <div class="flex items-center mb-4">
+          <img id="speaker-avatar" src="photo/lxy.jpg" alt="说话者" class="w-16 h-16 rounded-full object-cover border-4 border-primary/30 mr-4">
+          <div>
+            <h3 id="speaker-name" class="text-xl font-bold text-primary">李咸鱼</h3>
+            <p id="scene-name" class="text-sm text-neutral/60 flex items-center">
+              <i class="fa fa-map-marker mr-2"></i>学校 - 教学楼走廊
+            </p>
+          </div>
+        </div>
+        
+        <!-- 对话内容 -->
+        <div id="dialog-content" class="text-lg md:text-xl mb-6 leading-relaxed">
+          新学期开始了啊...没想到居然和王晁洋分到了同一个班。她可是学校里的风云人物，成绩优异，性格却总是冷冰冰的，像一座难以接近的冰山。不知道接下来的一年，能不能和她好好相处呢？
+        </div>
+        
+       <!-- 选项按钮 -->
+<div id="choices" class="grid grid-cols-1 gap-4 mt-6 px-2">
+  <button class="choice-btn primary-choice flex items-center" onclick="nextDialog(1, 'school', '主动打招呼')">
+    <i class="fa fa-comment-o mr-4 ml-4"></i> 主动上前打招呼
+  </button>
+  <button class="choice-btn secondary-choice flex items-center" onclick="nextDialog(2, 'school', '保持距离')">
+    <i class="fa fa-user-o mr-4 ml-4"></i> 还是保持距离比较好
+  </button>
+</div>
+      </div>
+    </div>
+
+    <!-- 游戏控制按钮 -->
+    <div class="absolute top-4 right-4 z-30 flex gap-3">
+      <button id="skip-btn" class="bg-light/80 hover:bg-light text-neutral rounded-full p-3 shadow-lg transition-all" title="跳过对话">
+        <i class="fa fa-forward"></i>
+      </button>
+      <button id="save-btn" class="bg-light/80 hover:bg-light text-neutral rounded-full p-3 shadow-lg transition-all" title="保存进度">
+        <i class="fa fa-save"></i>
+      </button>
+      <button id="load-btn" class="bg-light/80 hover:bg-light text-neutral rounded-full p-3 shadow-lg transition-all" title="读取进度">
+        <i class="fa fa-load"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // 场景配置
+    const scenes = {
+      school: "./photo/school.jpeg", // 学校
+      library: "./photo/library.jpeg", // 图书馆
+      rooftop: "./photo/tiantai.jpeg", // 天台
+      classroom: "./photo/classroom.jpeg", // 教室
+      cinema: "./photo/cinema.jpeg", // 电影院
+      confession: "./photo/sun.webp", // 夕阳告白
+      cafeteria: "./photo/shitang.webp", // 食堂
+      park: "./photo/garden.webp", // 公园
+      bookstore: "./photo/library.jpeg" // 书店
+    };
+
+    // 角色配置
+    const characters = {
+      male: {
+        name: "李咸鱼",
+        avatar: "photo/lxy.jpg",
+        sprite: "photo/cxk.jpg"
+      },
+      female: {
+        name: "王晁洋",
+        avatar: "photo/lezi.jpg",
+        sprite: "photo/wcy.jpg"
+      }
+    };
+
+    // 加长版剧情数据（双主线结构）
+    const storyData = {
+      // 初始对话
+      0: {
+        speaker: "male",
+        text: "新学期开始了啊...没想到居然和王晁洋分到了同一个班。她可是学校里的风云人物，成绩优异，性格却总是冷冰冰的，像一座难以接近的冰山。不知道接下来的一年，能不能和她好好相处呢？",
+        choices: [
+          { next: 1, text: "主动上前打招呼", route: "warm" },
+          { next: 2, text: "还是保持距离比较好", route: "cool" }
+        ],
+        scene: "school",
+        sceneText: "学校 - 教学楼走廊",
+        showMale: true,
+        showFemale: false
+      },
+
+      // ==================== 温暖路线（主动热情）====================
+      1: {
+        speaker: "female",
+        text: "（转过头，眼神略带惊讶，语气平淡）嗯？你是...李咸鱼同学？没想到你会主动跟我说话。我还以为，大家都觉得我很难接近呢。",
+        choices: [
+          { next: 3, text: "笑着说：怎么会呢，我觉得你很特别", route: "warm" },
+          { next: 4, text: "有点紧张地说：我们...以后就是同学了，请多指教", route: "warm" }
+        ],
+        scene: "school",
+        sceneText: "学校 - 教学楼走廊",
+        showMale: true,
+        showFemale: true
+      },
+
+      3: {
+        speaker: "female",
+        text: "（嘴角微微上扬，露出难得的笑容）特别？这还是第一次有人这么说我。谢谢你，李咸鱼同学。其实我只是不太擅长和陌生人交流，并不是故意冷淡的。",
+        choices: [
+          { next: 5, text: "顺势说：那以后我们可以多交流啊", route: "warm" },
+          { next: 6, text: "温柔地说：没关系，我理解这种感觉", route: "warm" }
+        ],
+        scene: "school",
+        sceneText: "学校 - 教学楼走廊",
+        showMale: true,
+        showFemale: true
+      },
+
+      5: {
+        speaker: "female",
+        text: "（眼睛亮了一下）嗯，好啊。其实我早就听说过你了，班长说你的数学特别好，而我正好在这方面有些薄弱。以后有不懂的问题，可能要多麻烦你了。",
+        choices: [
+          { next: 7, text: "爽快地答应：随时可以来找我！", route: "warm" },
+          { next: 8, text: "认真地说：没问题，我们互相学习", route: "warm" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 座位旁",
+        showMale: true,
+        showFemale: true
+      },
+
+      7: {
+        speaker: "male",
+        text: "就这样，我和王晁洋的交流渐渐多了起来。几天后的午休时间，我在教室准备数学竞赛的资料，她抱着作业本走了过来，看起来有些犹豫。",
+        choices: [
+          { next: 9, text: "主动询问：是不是遇到难题了？", route: "warm" },
+          { next: 10, text: "等她主动开口", route: "warm" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 午休时间",
+        showMale: true,
+        showFemale: true
+      },
+
+      9: {
+        speaker: "female",
+        text: "（有些不好意思地点点头）嗯...这道函数题我想了很久都没头绪。你能稍微给我讲一下思路吗？不会占用你太多时间的。",
+        choices: [
+          { next: 11, text: "详细讲解，耐心解答", route: "warm" },
+          { next: 12, text: "先讲大致思路，让她自己尝试", route: "warm" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 座位旁",
+        showMale: true,
+        showFemale: true
+      },
+
+      11: {
+        speaker: "female",
+        text: "（恍然大悟）原来如此！我之前一直卡在那个关键点上。李咸鱼，谢谢你，你讲得比老师还清楚易懂。为了感谢你，这周末我请你喝奶茶吧？",
+        choices: [
+          { next: 13, text: "开心地答应：好啊，正好我知道一家不错的店", route: "warm" },
+          { next: 14, text: "客气地说：不用这么麻烦，互相帮助应该的", route: "warm" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 座位旁",
+        showMale: true,
+        showFemale: true
+      },
+
+      13: {
+        speaker: "male",
+        text: "周末下午，我们约在学校附近的奶茶店。王晁洋今天穿了一件白色的连衣裙，和平时在学校的严肃形象完全不同，显得格外温柔。我们聊了很多，从学习聊到兴趣爱好，发现彼此有很多共同点。",
+        choices: [
+          { next: 15, text: "邀请她：喝完奶茶，要不要去附近的书店看看？", route: "warm" },
+          { next: 16, text: "继续聊天：我还想多了解你一些", route: "warm" }
+        ],
+        scene: "bookstore",
+        sceneText: "书店 - 门口",
+        showMale: true,
+        showFemale: true
+      },
+
+      15: {
+        speaker: "female",
+        text: "（眼睛一亮）好啊！我正好想买几本参考书。其实我平时休息的时候，最喜欢来书店看书了，这里的氛围特别好。",
+        choices: [
+          { next: 17, text: "找她感兴趣的书籍，一起讨论", route: "warm" },
+          { next: 18, text: "默默陪伴在她身边，偶尔搭话", route: "warm" }
+        ],
+        scene: "bookstore",
+        sceneText: "书店 - 文学区",
+        showMale: true,
+        showFemale: true
+      },
+
+      17: {
+        speaker: "male",
+        text: "我们在书店里待了一下午，一起讨论喜欢的作家和书籍。离开时，天色已经渐渐暗了下来。走到公园门口，王晁洋突然停下脚步，看着远处的晚霞。",
+        choices: [
+          { next: 19, text: "轻声问：在看什么呢？很美吧", route: "warm" },
+          { next: 20, text: "安静地陪她一起看", route: "warm" }
+        ],
+        scene: "park",
+        sceneText: "公园 - 湖边",
+        showMale: true,
+        showFemale: true
+      },
+
+      19: {
+        speaker: "female",
+        text: "（转过头，眼神温柔）嗯，很美。李咸鱼，谢谢你今天陪我。和你在一起的时光，总是感觉特别轻松愉快。我好像...越来越喜欢和你待在一起了。",
+        choices: [
+          { next: 21, text: "鼓起勇气：我也是，我喜欢你很久了", route: "warm" },
+          { next: 22, text: "温柔回应：我也很喜欢和你在一起", route: "warm" }
+        ],
+        scene: "park",
+        sceneText: "公园 - 湖边夕阳下",
+        showMale: true,
+        showFemale: true
+      },
+
+      21: {
+        speaker: "female",
+        text: "（脸颊泛红，眼眶有些湿润）真的吗？李咸鱼...其实从你第一次主动跟我打招呼开始，我就注意到你了。你就像一道阳光，照亮了我原本平淡的生活。我...我也喜欢你！",
+        choices: [
+          { next: 23, text: "轻轻拥抱她", route: "warm" },
+          { next: 24, text: "握住她的手，认真看着她", route: "warm" }
+        ],
+        scene: "confession",
+        sceneText: "湖边 - 夕阳下",
+        showMale: true,
+        showFemale: true
+      },
+
+      23: {
+        speaker: "male",
+        text: "（轻轻拥抱她，感受着她的体温）以后，让我一直陪伴在你身边吧。我会用我的方式，一直温暖你。",
+        choices: [],
+        scene: "confession",
+        sceneText: "湖边 - 夕阳下",
+        showMale: true,
+        showFemale: true,
+        ending: true,
+        endingText: "温暖结局 - 阳光与温柔的双向奔赴"
+      },
+
+      24: {
+        speaker: "female",
+        text: "（紧紧回握我的手，笑容灿烂）嗯！我们以后要一起学习，一起看遍所有美丽的风景，一起走过属于我们的青春岁月。",
+        choices: [],
+        scene: "confession",
+        sceneText: "湖边 - 夕阳下",
+        showMale: true,
+        showFemale: true,
+        ending: true,
+        endingText: "温暖结局 - 携手同行的青春"
+      },
+
+      // 温暖路线分支剧情
+      4: {
+        speaker: "female",
+        text: "（轻轻点头）嗯，以后请多指教，李咸鱼同学。其实我也希望能和同学们好好相处，只是不知道该怎么表达自己。",
+        choices: [
+          { next: 25, text: "鼓励她：不用急，慢慢来吧", route: "warm" },
+          { next: 26, text: "提议：那以后我们可以多交流交流", route: "warm" }
+        ],
+        scene: "school",
+        sceneText: "学校 - 教学楼走廊",
+        showMale: true,
+        showFemale: true
+      },
+
+      26: {
+        speaker: "female",
+        text: "（露出微笑）好啊，谢谢你愿意主动接近我。其实我数学不太好，以后可能要经常请教你了。",
+        choices: [
+          { next: 27, text: "爽快地说：随时欢迎！", route: "warm" },
+          { next: 28, text: "温和地说：互相学习，我也有很多要向你请教的", route: "warm" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 座位旁",
+        showMale: true,
+        showFemale: true
+      },
+
+      27: {
+        speaker: "male",
+        text: "从那以后，王晁洋经常会来问我数学题。我们的交流越来越多，我发现她其实是个内心很温柔的女孩，只是不擅长表达。期中考试前的一天，我在图书馆复习，看到她一个人坐在角落，看起来有些疲惫。",
+        choices: [
+          { next: 29, text: "过去关心：要不要休息一下？", route: "warm" },
+          { next: 30, text: "默默递上一瓶水", route: "warm" }
+        ],
+        scene: "library",
+        sceneText: "图书馆 - 自习区",
+        showMale: true,
+        showFemale: true
+      },
+
+      29: {
+        speaker: "female",
+        text: "（抬起头，眼底带着血丝）啊，李咸鱼同学。谢谢你，我确实有点累了，但是还有很多知识点没复习完。这次期中考试，我想考个好成绩。",
+        choices: [
+          { next: 31, text: "陪她一起复习，帮她划重点", route: "warm" },
+          { next: 32, text: "劝她适当休息：劳逸结合效率更高", route: "warm" }
+        ],
+        scene: "library",
+        sceneText: "图书馆 - 自习区",
+        showMale: true,
+        showFemale: true
+      },
+
+      31: {
+        speaker: "female",
+        text: "（感动地看着我）李咸鱼，你真是个好人。有你帮忙，我感觉安心多了。其实...我之所以这么努力，是想证明自己并不只是个冷漠的人。",
+        choices: [
+          { next: 33, text: "安慰她：你本来就很优秀", route: "warm" },
+          { next: 34, text: "鼓励她：我相信你一定可以的", route: "warm" }
+        ],
+        scene: "library",
+        sceneText: "图书馆 - 自习区",
+        showMale: true,
+        showFemale: true
+      },
+
+      33: {
+  speaker: "male",
+  text: "期中考试结束后，王晁洋的数学成绩有了很大进步。她特意找到我，脸上带着久违的笑容，看起来心情很好。午休时间，我们在食堂不期而遇。",
+  choices: [
+    { next: 89, text: "主动打招呼并邀请她一起坐", route: "warm" },
+    { next: 90, text: "对她点头微笑，继续吃自己的饭", route: "warm" }
+  ],
+  scene: "cafeteria",
+  sceneText: "食堂 - 午餐时间",
+  showMale: true,
+  showFemale: true
+},
+
+89: {
+  speaker: "female",
+  text: "（有些惊喜）好啊！正好我一个人。对了，这次期中考试真的多亏了你，我的数学终于突破了90分！这是我第一次考这么好。",
+  choices: [
+    { next: 91, text: "笑着说：恭喜你，你的努力值得的", route: "warm" },
+    { next: 92, text: "温和地说：是你自己基础好，我只是稍作指点", route: "warm" }
+  ],
+  scene: "cafeteria",
+  sceneText: "食堂 - 午餐时间",
+  showMale: true,
+  showFemale: true
+},
+
+91: {
+  speaker: "female",
+  text: "（脸颊微红）其实我今天特意早起排队买了你喜欢的糖醋排骨，不知道你要不要尝尝？",
+  choices: [
+    { next: 93, text: "开心地接受：太好了，我最喜欢这个了", route: "warm" },
+    { next: 94, text: "礼貌地说：谢谢，那我也分你一些我的菜", route: "warm" }
+  ],
+  scene: "cafeteria",
+  sceneText: "食堂 - 午餐时间",
+  showMale: true,
+  showFemale: true
+},
+
+93: {
+  speaker: "male",
+  text: "我们在食堂里相视而笑，分享着彼此的饭菜。阳光透过窗户洒在餐桌上，一切都显得那么温馨。王晁洋突然想起了什么，眼神一亮地看着我。",
+  choices: [
+    { next: 35, text: "好奇地问：怎么了？", route: "warm" },
+    { next: 95, text: "安静地等待她说下去", route: "warm" }
+  ],
+  scene: "cafeteria",
+  sceneText: "食堂 - 午餐时间",
+  showMale: true,
+  showFemale: true
+},
+
+90: {
+  speaker: "female",
+  text: "（端着餐盘走到我面前）介意我坐在这里吗？想跟你说声谢谢，这次考试真的多亏了你。",
+  choices: [
+    { next: 96, text: "连忙说：不介意，请坐", route: "warm" },
+    { next: 97, text: "摇摇头，示意她坐下", route: "warm" }
+  ],
+  scene: "cafeteria",
+  sceneText: "食堂 - 午餐时间",
+  showMale: true,
+  showFemale: true
+},
+
+      35: {
+  speaker: "female",
+  text: "（拿出手机）我看了一下，最近有部爱情电影评价不错，据说很感人。我们就去看这部吧？",
+  choices: [
+    { next: 37, text: "同意：好啊，我也想看这部", route: "warm" },
+    { next: 38, text: "提议：或者我们可以先去吃点东西？", route: "warm" }
+  ],
+  scene: "cinema",
+  sceneText: "电影院 - 门口",
+  showMale: true,
+  showFemale: true
+},
+
+      37: {
+        speaker: "male",
+        text: "电影确实很感人，看到高潮部分，我注意到王晁洋偷偷抹了眼泪。散场后，我们沿着街道慢慢散步，夜色温柔，路灯将我们的影子拉得很长。",
+        choices: [
+          { next: 39, text: "轻声问：刚才是不是哭了？", route: "warm" },
+          { next: 40, text: "温柔地说：电影真的很感人", route: "warm" }
+        ],
+        scene: "confession",
+        sceneText: "街道 - 夜晚",
+        showMale: true,
+        showFemale: true
+      },
+
+      39: {
+        speaker: "female",
+        text: "（有些不好意思地低下头）嗯...有点感人。李咸鱼，谢谢你一直以来的帮助和陪伴。和你在一起的时候，我总是感觉特别安心和快乐。",
+        choices: [
+          { next: 41, text: "表白：其实我喜欢你很久了", route: "warm" },
+          { next: 42, text: "温柔回应：我也很喜欢和你在一起", route: "warm" }
+        ],
+        scene: "confession",
+        sceneText: "街道 - 夜晚路灯下",
+        showMale: true,
+        showFemale: true
+      },
+
+      41: {
+        speaker: "female",
+        text: "（猛地抬起头，眼睛发亮）李咸鱼...你说的是真的吗？我...我也是！从你耐心教我数学题开始，我就发现自己越来越在意你了。",
+        choices: [],
+        scene: "confession",
+        sceneText: "街道 - 夜晚路灯下",
+        showMale: true,
+        showFemale: true,
+        ending: true,
+        endingText: "温暖结局 - 细水长流的爱恋"
+      },
+
+      // ==================== 冷淡路线（内敛含蓄）====================
+      2: {
+        speaker: "male",
+        text: "还是不要贸然搭话比较好，万一被她冷淡拒绝，以后在班里就太尴尬了。我默默走进教室，找了个靠后的座位坐下，而王晁洋则坐在了前排靠窗的位置，独自看着窗外。",
+        choices: [
+          { next: 43, text: "拿出课本，安静预习", route: "cool" },
+          { next: 44, text: "偷偷观察她的举动", route: "cool" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 开学第一天",
+        showMale: true,
+        showFemale: true
+      },
+
+      44: {
+        speaker: "male",
+        text: "她的侧脸在阳光的照射下显得格外柔和，和平时传闻中冷漠的形象完全不同。就在我看得入神的时候，她好像察觉到了我的目光，转过头来，我们的视线不经意间相遇了。",
+        choices: [
+          { next: 45, text: "慌忙移开视线，假装看书", route: "cool" },
+          { next: 46, text: "礼貌地点点头，然后继续看书", route: "cool" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 开学第一天",
+        showMale: true,
+        showFemale: true
+      },
+
+      46: {
+        speaker: "female",
+        text: "（眼神有些惊讶，随即微微点头回应，然后转回头去）",
+        choices: [
+          { next: 47, text: "继续安静看书", route: "cool" },
+          { next: 48, text: "心里有些在意，偶尔偷偷看她", route: "cool" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 开学第一天",
+        showMale: true,
+        showFemale: true
+      },
+
+      48: {
+        speaker: "male",
+        text: "接下来的几周，我们在同一个班级却几乎没有交流。直到一次数学课后，老师布置了一道很难的思考题，要求两人一组完成。教室里的同学都纷纷组队，而我和王晁洋却都落单了。",
+        choices: [
+          { next: 49, text: "犹豫了一下，主动邀请她组队", route: "cool" },
+          { next: 50, text: "等待她是否会主动开口", route: "cool" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 数学课后",
+        showMale: true,
+        showFemale: true
+      },
+
+      49: {
+        speaker: "female",
+        text: "（抬起头，眼神平静）好。我正好也觉得这道题有些难度，两个人一起讨论可能会更好。",
+        choices: [
+          { next: 51, text: "找个安静的地方开始讨论", route: "cool" },
+          { next: 52, text: "先各自思考，然后交换想法", route: "cool" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 数学课后",
+        showMale: true,
+        showFemale: true
+      },
+
+      51: {
+        speaker: "male",
+        text: "我们来到学校的图书馆，找了个靠窗的位置坐下。出乎意料的是，王晁洋在数学方面其实很有想法，只是缺乏一些解题技巧。我们的讨论虽然不多，但每次交流都能说到关键点上。",
+        choices: [
+          { next: 53, text: "专注于解题，偶尔提出自己的观点", route: "cool" },
+          { next: 54, text: "适当询问她的思路，互相启发", route: "cool" }
+        ],
+        scene: "library",
+        sceneText: "图书馆 - 自习区",
+        showMale: true,
+        showFemale: true
+      },
+
+      54: {
+        speaker: "female",
+        text: "（认真地阐述自己的思路）我觉得这道题应该从这个角度入手，但是在这里遇到了瓶颈。你的想法呢？",
+        choices: [
+          { next: 55, text: "详细说明自己的解题思路", route: "cool" },
+          { next: 56, text: "提出关键点，引导她自己思考", route: "cool" }
+        ],
+        scene: "library",
+        sceneText: "图书馆 - 自习区",
+        showMale: true,
+        showFemale: true
+      },
+
+      55: {
+        speaker: "female",
+        text: "（恍然大悟）原来如此！我之前一直没想到这个关键点。谢谢你，李咸鱼同学。你的思路很清晰。",
+        choices: [
+          { next: 57, text: "客气地说：不用谢，互相学习", route: "cool" },
+          { next: 58, text: "简单回应：不客气", route: "cool" }
+        ],
+        scene: "library",
+        sceneText: "图书馆 - 自习区",
+        showMale: true,
+        showFemale: true
+      },
+
+      57: {
+        speaker: "male",
+        text: "那次合作之后，我们之间的氛围似乎变得微妙起来。虽然依然没有太多交流，但在走廊遇到时，她会主动点头示意；在图书馆偶遇时，会自然地坐在同一区域学习。期末考试前的一天，我在天台散心，没想到她也在那里。",
+        choices: [
+          { next: 59, text: "安静地站在一旁，不打扰她", route: "cool" },
+          { next: 60, text: "礼貌地打招呼：你也在这里？", route: "cool" }
+        ],
+        scene: "rooftop",
+        sceneText: "天台 - 午休时间",
+        showMale: true,
+        showFemale: true
+      },
+
+      60: {
+        speaker: "female",
+        text: "（转过头，语气平静却带着一丝柔和）嗯，这里比较安静，适合放松心情。你也是来散心的吗？",
+        choices: [
+          { next: 61, text: "点头：嗯，复习累了，来透透气", route: "cool" },
+          { next: 62, text: "简单回应：算是吧", route: "cool" }
+        ],
+        scene: "rooftop",
+        sceneText: "天台 - 午休时间",
+        showMale: true,
+        showFemale: true
+      },
+
+      61: {
+        speaker: "female",
+        text: "（看着远方）期末考试压力确实很大。其实...上次那道数学题，谢谢你。如果不是你，我可能到现在都解不出来。",
+        choices: [
+          { next: 63, text: "回应：不用在意，只是举手之劳", route: "cool" },
+          { next: 64, text: "说：你其实很聪明，只是差一点思路", route: "cool" }
+        ],
+        scene: "rooftop",
+        sceneText: "天台 - 午休时间",
+        showMale: true,
+        showFemale: true
+      },
+
+      64: {
+        speaker: "female",
+        text: "（嘴角微微上扬）谢谢你的认可。其实我一直觉得你很特别，和班里其他同学不一样。你总是很安静，但做事情很认真。",
+        choices: [
+          { next: 65, text: "有些意外：是吗？我没觉得", route: "cool" },
+          { next: 66, text: "平静地回应：你也是个很认真的人", route: "cool" }
+        ],
+        scene: "rooftop",
+        sceneText: "天台 - 午休时间",
+        showMale: true,
+        showFemale: true
+      },
+
+      66: {
+        speaker: "male",
+        text: "期末考试结束后，学校组织了一次毕业旅行（注：此处为高二升高三的学期末）。在旅行途中的篝火晚会上，大家都在尽情玩乐，而我和王晁洋却不约而同地走到了湖边，享受这份宁静。",
+        choices: [
+          { next: 67, text: "先开口：这里的夜景很美", route: "cool" },
+          { next: 68, text: "保持沉默，一起欣赏夜景", route: "cool" }
+        ],
+        scene: "park",
+        sceneText: "湖边 - 篝火晚会之夜",
+        showMale: true,
+        showFemale: true
+      },
+
+      67: {
+        speaker: "female",
+        text: "（轻轻点头）嗯，确实很美。李咸鱼同学，这学期以来，谢谢你。和你在同一个班级，感觉很安心。",
+        choices: [
+          { next: 69, text: "回应：我也这么觉得", route: "cool" },
+          { next: 70, text: "说：希望下学期也能和你一起进步", route: "cool" }
+        ],
+        scene: "park",
+        sceneText: "湖边 - 篝火晚会之夜",
+        showMale: true,
+        showFemale: true
+      },
+
+      70: {
+        speaker: "female",
+        text: "（转过头，眼神认真地看着我）其实...我希望不止是下学期。李咸鱼，和你相处的这些日子，我发现自己越来越在意你了。这种感觉很微妙，但很真实。",
+        choices: [
+          { next: 71, text: "认真回应：我也是", route: "cool" },
+          { next: 72, text: "有些犹豫，但还是坦诚心意：我也是这样想的", route: "cool" }
+        ],
+        scene: "confession",
+        sceneText: "湖边 - 星空下",
+        showMale: true,
+        showFemale: true
+      },
+
+      71: {
+        speaker: "female",
+        text: "（眼神一亮，脸上露出淡淡的笑容）真的吗？我还以为你对我没什么特别的感觉呢。其实我平时不太擅长表达自己的感情，但我是真心想和你好好相处的。",
+        choices: [
+          { next: 73, text: "平静地说：我们慢慢来，互相了解", route: "cool" },
+          { next: 74, text: "认真地说：我会珍惜这份感情", route: "cool" }
+        ],
+        scene: "confession",
+        sceneText: "湖边 - 星空下",
+        showMale: true,
+        showFemale: true
+      },
+
+      73: {
+        speaker: "male",
+        text: "（看着她的眼睛，语气平静却坚定）虽然我们的相处方式可能和别人不一样，但我相信，真正的感情是不需要过多言语的。我们可以慢慢走，一起经历更多的事情，让这份感情自然成长。",
+        choices: [],
+        scene: "confession",
+        sceneText: "湖边 - 星空下",
+        showMale: true,
+        showFemale: true,
+        ending: true,
+        endingText: "冷淡结局 - 沉默是金的深情"
+      },
+
+      74: {
+        speaker: "female",
+        text: "（轻轻点头，眼神温柔）嗯。我也是。即使没有太多甜言蜜语，只要能和你在一起，就觉得很安心。以后的路，我们一起慢慢走下去吧。",
+        choices: [],
+        scene: "confession",
+        sceneText: "湖边 - 星空下",
+        showMale: true,
+        showFemale: true,
+        ending: true,
+        endingText: "冷淡结局 - 细水长流的陪伴"
+      },
+
+      // 冷淡路线分支剧情
+      43: {
+        speaker: "male",
+        text: "我拿出课本安静预习，不知不觉中，上课铃响了。第一节课是班主任的课，主要讲了新学期的安排和注意事项。下课铃响后，同学们都纷纷离开座位，互相认识交流，而王晁洋依然坐在座位上，整理着笔记。",
+        choices: [
+          { next: 75, text: "继续留在座位上看书", route: "cool" },
+          { next: 76, text: "去食堂吃午饭", route: "cool" }
+        ],
+        scene: "classroom",
+        sceneText: "教室 - 第一节课后",
+        showMale: true,
+        showFemale: true
+      },
+
+      76: {
+        speaker: "male",
+        text: "我来到食堂，找了个靠窗的位置坐下。没想到王晁洋也坐在不远处的单人座位上，安静地吃着午饭。就在我准备开始吃饭的时候，看到她不小心把汤洒在了衣服上。",
+        choices: [
+          { next: 77, text: "犹豫了一下，递上纸巾", route: "cool" },
+          { next: 78, text: "假装没看见，继续吃饭", route: "cool" }
+        ],
+        scene: "cafeteria",
+        sceneText: "食堂 - 午餐时间",
+        showMale: true,
+        showFemale: true
+      },
+
+      77: {
+        speaker: "female",
+        text: "（有些慌乱地擦拭着衣服，看到我递来的纸巾，愣了一下）谢谢你。",
+        choices: [
+          { next: 79, text: "简单回应：不客气", route: "cool" },
+          { next: 80, text: "问：需要帮忙吗？", route: "cool" }
+        ],
+        scene: "cafeteria",
+        sceneText: "食堂 - 午餐时间",
+        showMale: true,
+        showFemale: true
+      },
+
+      79: {
+        speaker: "male",
+        text: "这次小小的意外之后，我们之间的关系似乎有了一丝微妙的变化。在走廊遇到时，她会主动点头示意；偶尔在图书馆遇到，会自然地坐在附近。一次体育课上，我不小心扭伤了脚踝，同学们都散去后，王晁洋却留了下来。",
+        choices: [
+          { next: 81, text: "有些意外：你怎么还没走？", route: "cool" },
+          { next: 82, text: "沉默地看着她", route: "cool" }
+        ],
+        scene: "school",
+        sceneText: "操场 - 体育课后",
+        showMale: true,
+        showFemale: true
+      },
+
+      81: {
+        speaker: "female",
+        text: "（手里拿着一瓶矿泉水和纸巾）你的脚没事吧？我看你走路不太方便。",
+        choices: [
+          { next: 83, text: "谢谢：没什么大事，过几天就好了", route: "cool" },
+          { next: 84, text: "有些不好意思：麻烦你了", route: "cool" }
+        ],
+        scene: "school",
+        sceneText: "操场 - 体育课后",
+        showMale: true,
+        showFemale: true
+      },
+
+      83: {
+        speaker: "female",
+        text: "（递过矿泉水）喝点水吧。其实...一直想谢谢你上次在食堂帮我。我平时不太会表达感谢，但我一直记在心里。",
+        choices: [
+          { next: 85, text: "回应：举手之劳，不用放在心上", route: "cool" },
+          { next: 86, text: "简单点头：嗯", route: "cool" }
+        ],
+        scene: "school",
+        sceneText: "操场 - 体育课后",
+        showMale: true,
+        showFemale: true
+      },
+
+      85: {
+        speaker: "male",
+        text: "从那以后，我们的交流虽然依然不多，但每一次都很真诚。期末考试结束后，她主动找到了我，递给我一张纸条，上面写着电影院的地址和时间，还有一行小字：'听说这部电影不错，一起去看吗？'",
+        choices: [
+          { next: 87, text: "点头答应：好", route: "cool" },
+          { next: 88, text: "问：什么时候？", route: "cool" }
+        ],
+        scene: "school",
+        sceneText: "教室 - 期末考试后",
+        showMale: true,
+        showFemale: true
+      },
+
+      87: {
+        speaker: "male",
+        text: "周末，我按时来到电影院。王晁洋已经在门口等我了，她穿着一件淡蓝色的连衣裙，看起来比平时温柔了许多。电影是一部安静的文艺片，看完后我们沿着街道慢慢散步。",
+        choices: [
+          { next: 89, text: "先开口：电影很好看", route: "cool" },
+          { next: 90, text: "保持沉默，享受这份宁静", route: "cool" }
+        ],
+        scene: "cinema",
+        sceneText: "电影院门口 - 电影结束后",
+        showMale: true,
+        showFemale: true
+      },
+
+      89: {
+        speaker: "female",
+        text: "（轻轻点头）嗯，我也觉得。李咸鱼，其实我找你出来，不只是为了看电影。这段时间和你相处下来，我发现自己越来越在意你了。虽然我们平时交流不多，但我很珍惜和你在一起的时光。",
+        choices: [
+          { next: 91, text: "认真回应：我也是", route: "cool" },
+          { next: 92, text: "有些犹豫，但还是坦诚：我也是这样想的", route: "cool" }
+        ],
+        scene: "confession",
+        sceneText: "街道 - 黄昏时分",
+        showMale: true,
+        showFemale: true
+      },
+
+      91: {
+        speaker: "female",
+        text: "（眼神温柔，脸上露出淡淡的笑容）真的吗？我还以为你对我没什么感觉呢。其实我不太擅长表达感情，但我说的都是真心话。",
+        choices: [],
+        scene: "confession",
+        sceneText: "街道 - 黄昏时分",
+        showMale: true,
+        showFemale: true,
+        ending: true,
+        endingText: "冷淡结局 - 含蓄内敛的真心"
+      }
+    };
+
+    // 当前游戏状态
+    let gameState = {
+      currentDialog: 0,
+      currentRoute: "",
+      currentScene: "school",
+      savedStates: []
+    };
+
+    // 初始化游戏
+    function initGame() {
+      renderDialog(gameState.currentDialog);
+      // 绑定控制按钮事件
+      document.getElementById('skip-btn').addEventListener('click', skipDialog);
+      document.getElementById('save-btn').addEventListener('click', saveGame);
+      document.getElementById('load-btn').addEventListener('click', loadGame);
+    }
+
+    // 渲染对话
+    function renderDialog(dialogId) {
+      const dialog = storyData[dialogId];
+      if (!dialog) return;
+
+      // 更新游戏状态
+      gameState.currentDialog = dialogId;
+      gameState.currentScene = dialog.scene;
+
+      // 更新场景
+      const sceneElement = document.getElementById('scene');
+      sceneElement.style.backgroundImage = `url(${scenes[dialog.scene]})`;
+      document.getElementById('scene-name').innerHTML = `<i class="fa fa-map-marker mr-2"></i>${dialog.sceneText}`;
+
+      // 更新角色显示
+      const maleChar = document.getElementById('male-character');
+      const femaleChar = document.getElementById('female-character');
+      
+      maleChar.style.opacity = dialog.showMale ? '1' : '0';
+      femaleChar.style.opacity = dialog.showFemale ? '1' : '0';
+      maleChar.src = characters.male.sprite;
+      femaleChar.src = characters.female.sprite;
+
+      // 更新对话内容
+      const speaker = dialog.speaker === "male" ? characters.male : characters.female;
+      document.getElementById('speaker-avatar').src = speaker.avatar;
+      document.getElementById('speaker-name').textContent = speaker.name;
+      document.getElementById('dialog-content').textContent = dialog.text;
+
+      // 更新选项
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+
+      if (dialog.choices.length > 0) {
+        dialog.choices.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-lg shadow-lg flex items-center justify-center';
+          if (index === 1) {
+            button.className = 'choice-btn bg-light hover:bg-light/90 text-neutral font-medium py-3 px-6 rounded-lg shadow-lg border border-neutral/20 flex items-center justify-center';
+          }
+          button.innerHTML = `<i class="fa fa-comment-o mr-2"></i> ${choice.text}`;
+          button.onclick = () => {
+            gameState.currentRoute = choice.route;
+            nextDialog(choice.next, dialog.scene, choice.text);
+          };
+          choicesContainer.appendChild(button);
+        });
+      } else {
+        // 结局处理
+        const endingDiv = document.createElement('div');
+        endingDiv.className = 'text-center py-4';
+        endingDiv.innerHTML = `
+          <h3 class="text-2xl font-bold text-secondary mb-4">${dialog.endingText}</h3>
+          <button class="bg-secondary hover:bg-secondary/90 text-white font-medium py-3 px-8 rounded-lg shadow-lg" onclick="restartGame()">
+            <i class="fa fa-refresh mr-2"></i> 重新开始
+          </button>
+        `;
+        choicesContainer.appendChild(endingDiv);
+      }
+
+      // 添加动画效果
+      choicesContainer.classList.add('animate-slide-up');
+      setTimeout(() => {
+        choicesContainer.classList.remove('animate-slide-up');
+      }, 600);
+    }
+
+    // 下一段对话
+    function nextDialog(nextId, scene, choiceText) {
+      // 添加过渡动画
+      const dialogBox = document.querySelector('.dialog-box');
+      dialogBox.classList.add('opacity-0');
+      
+      setTimeout(() => {
+        renderDialog(nextId);
+        dialogBox.classList.remove('opacity-0');
+        dialogBox.classList.add('animate-slide-up');
+        setTimeout(() => {
+          dialogBox.classList.remove('animate-slide-up');
+        }, 600);
+      }, 300);
+    }
+
+    // 跳过对话
+    function skipDialog() {
+      const currentDialog = storyData[gameState.currentDialog];
+      if (currentDialog.choices.length > 0) {
+        // 跳过到下一个对话（默认选第一个选项）
+        const firstChoice = currentDialog.choices[0];
+        gameState.currentRoute = firstChoice.route;
+        nextDialog(firstChoice.next, currentDialog.scene, firstChoice.text);
+      }
+    }
+
+    // 保存游戏
+    function saveGame() {
+      const saveData = {
+        dialogId: gameState.currentDialog,
+        route: gameState.currentRoute,
+        scene: gameState.currentScene,
+        timestamp: new Date().toLocaleString()
+      };
+      gameState.savedStates.push(saveData);
+      
+      // 显示保存提示
+      showToast(`游戏已保存 (${gameState.savedStates.length})`);
+    }
+
+    // 读取游戏
+    function loadGame() {
+      if (gameState.savedStates.length === 0) {
+        showToast("没有保存的游戏进度");
+        return;
+      }
+      
+      // 取最后一次保存
+      const lastSave = gameState.savedStates[gameState.savedStates.length - 1];
+      gameState.currentDialog = lastSave.dialogId;
+      gameState.currentRoute = lastSave.route;
+      gameState.currentScene = lastSave.scene;
+      
+      renderDialog(lastSave.dialogId);
+      showToast(`已加载保存: ${lastSave.timestamp}`);
+    }
+
+    // 重新开始
+    function restartGame() {
+      gameState = {
+        currentDialog: 0,
+        currentRoute: "",
+        currentScene: "school",
+        savedStates: gameState.savedStates // 保留存档
+      };
+      renderDialog(0);
+    }
+
+    // 显示提示框
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-primary text-white py-2 px-4 rounded-lg shadow-lg z-50 animate-slide-up';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'transition-opacity', '0.5s');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 500);
+      }, 2000);
+    }
+
+    // 页面加载完成后初始化游戏
+    window.addEventListener('load', initGame);
+  </script>
+</body>
+</html>
